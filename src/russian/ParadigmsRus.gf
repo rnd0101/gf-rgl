@@ -496,15 +496,13 @@ foreign = Foreign; -- +++ MG_UR: added +++
 	 } ;
 
 
-  oper mkShortParticiple : V -> A = \v ->
-	 let vstem = verbStem v in
-         mk3AShort (vstem + "н") (vstem + "на") (vstem + "но") (vstem + "ны") True;
-
   oper mkActPresParticiple : V -> A = mkParticiple Act (VPresent P3) ;
   oper mkActPastParticiple : V -> A = mkParticiple Act (VPresent P3) ;
   oper mkPassPresParticiple : V -> A = mkParticiple Pass VPast ;
   oper mkPassPastParticiple : V -> A = mkParticiple Pass VPast ;
-  oper mkPassPastShortParticiple : V -> A = mkShortParticiple ;
+  oper mkPassPastShortParticiple : V -> A = \v ->
+	 let vstem = verbStem v in
+         mk3AShort (vstem + "н") (vstem + "на") (vstem + "но") (vstem + "ны") True;
 
 
   oper mkGerund : VTense -> V -> Adv = \tense, v ->
