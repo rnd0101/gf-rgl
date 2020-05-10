@@ -445,6 +445,16 @@ foreign = Foreign; -- +++ MG_UR: added +++
   -- khaki, mini, hindi, netto
   adjInvar : Str -> Adjective = \stem -> { s = \\_ => stem } ;
 
+
+  oper mkAdjShort: Adjective -> Bool -> A = \adj, postfix ->
+   {s = table {
+             Posit => adj.s ;
+             _ => \\dummy => nonExist
+           } ;
+    p = postfix ;
+    preferShort = PrefShort
+  } ** {lock_A = <>};
+
   oper mkAdjDeg: Adjective -> Str -> A = \adj, s ->
    {s = table
            {
@@ -455,7 +465,7 @@ foreign = Foreign; -- +++ MG_UR: added +++
     p = False ;
     preferShort = PrefShort
   } ** {lock_A = <>};
-  
+
   oper mkAdjDegFull: Adjective -> Str -> ShortFormPreference -> A = \adj, s,sfp ->
    {s = table
            {
@@ -495,7 +505,7 @@ foreign = Foreign; -- +++ MG_UR: added +++
 	       (Second|SecondA) => "им" ;
 	       _ => "ем"
 	       } in
-         mkA (vstem + passpast + "ый") (vstem + "н") (vstem + "на") (vstem + "но") (vstem + "ны");
+         mk3AShort (vstem + "н") (vstem + "на") (vstem + "но") (vstem + "ны") True;
 
   oper mkActPresParticiple : V -> A = mkParticiple Act (VPresent P3) ;
   oper mkActPastParticiple : V -> A = mkParticiple Act (VPresent P3) ;
@@ -586,7 +596,7 @@ foreign = Foreign; -- +++ MG_UR: added +++
   
 -- Liza Zimina 04/2018: to make correct short forms of adjectives
 
-  mk3A : Str -> Str -> Str -> Str -> Str -> A = \positive,shortMasc,shortFem,shortNeut,shortPl  -> 
+  mk3A : Str -> Str -> Str -> Str -> Str -> A = \positive,shortMasc,shortFem,shortNeut,shortPl ->
     let {koren = Predef.tk 2 positive ;
          comparative = koren + "ее"} in  
     case positive of {
@@ -597,7 +607,10 @@ foreign = Foreign; -- +++ MG_UR: added +++
       stem+"ий"                        => mkAdjDeg (aRegSoftWorstCase Qual stem shortMasc shortFem shortNeut shortPl) comparative ;
       stem                             => mkAdjDeg (adjInvar stem) comparative
     } ;
-    
+
+  mk3AShort : Str -> Str -> Str -> Str -> IsPostfixAdj -> A = \shortMasc,shortFem,shortNeut,shortPl,postfix  ->
+    mkAdjShort (aOnlyShortCase shortMasc shortFem shortNeut shortPl postfix) postfix ;
+
   mk4A : Str -> ShortFormPreference -> A = \positive,prefshort -> 
     let {koren = Predef.tk 2 positive ;
          comparative = koren + "ее"} in 

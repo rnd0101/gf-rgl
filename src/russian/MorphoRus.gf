@@ -1386,6 +1386,22 @@ oper ProperName : Type = {s :  Case => Str ; g : Gender ; anim : Animacy} ;
                      (Prepos _) => lubercy + "ах" };
           g = Neut ; anim = anim };
 
+
+  oper aOnlyShortCase : Str -> Str -> Str -> Str -> IsPostfixAdj -> Adjective = \shortMasc, shortFem, shortNeut, shortPl, postfix ->
+    mkAdjPhrase { s = table {
+	 AFShort (GSg Masc) => shortMasc ;
+	 AFShort (GSg Fem)  => shortFem ;
+	 AFShort (GSg Neut) => shortNeut ;
+	 AFShort GPl        => shortPl ;
+	 AF _ _ (GSg Masc) => shortMasc ;
+	 AF _ _ (GSg Fem)  => shortFem ;
+	 AF _ _ (GSg Neut) => shortNeut ;
+	 AF _ _ GPl        => shortPl ;
+         _                  => shortPl
+                    }
+         } postfix ;
+
+
   oper aRegHardWorstCase : AdjStress -> AdjType -> Str -> Str -> Str -> Str -> Str -> Adjective = \stress, at, stem, shortMasc, shortFem, shortNeut, shortPl ->
     let i = iAfter stem in
     let o = case stress of {
