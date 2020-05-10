@@ -485,10 +485,24 @@ foreign = Foreign; -- +++ MG_UR: added +++
 	   _ => mkA "" -- Russian participles do not have a future tense
 	 } ;
 
+
+  oper mkShortParticiple : V -> A = \v ->
+	 let vstem = verbStem v in
+	 let actpres = verbHasEnding v in
+	 let actpast = stemHasEnding vstem in
+	 let passpast = case hasConj v of {
+	       (First|FirstE) => "ем" ;
+	       (Second|SecondA) => "им" ;
+	       _ => "ем"
+	       } in
+         mkA (vstem + passpast + "ый") (vstem + "н") (vstem + "на") (vstem + "но") (vstem + "ны");
+
   oper mkActPresParticiple : V -> A = mkParticiple Act (VPresent P3) ;
   oper mkActPastParticiple : V -> A = mkParticiple Act (VPresent P3) ;
   oper mkPassPresParticiple : V -> A = mkParticiple Pass VPast ;
   oper mkPassPastParticiple : V -> A = mkParticiple Pass VPast ;
+  oper mkPassPastShortParticiple : V -> A = mkShortParticiple ;
+
 
   oper mkGerund : VTense -> V -> Adv = \tense, v ->
 	 let vstem = verbStem v in
