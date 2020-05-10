@@ -251,8 +251,9 @@ firstE = FirstE ;
 second = Second ;
 secondA = SecondA ;
 mixed = Mixed ;
-dolzhen = Dolzhen; 
+dolzhen = Dolzhen;
 foreign = Foreign; -- +++ MG_UR: added +++
+shortPP = ShortPP; -- for short form past participles
 
   true = True;
   false = False ;

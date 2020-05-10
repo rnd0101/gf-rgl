@@ -1058,7 +1058,7 @@ oper ti_j_EndDecl : Str -> Adjective = \s ->{s = table {
 ---- patterns in the present tense in the indicative mood.
 
 -- +++ MG_UR: new conjugation class 'Foreign' introduced +++
-param Conjugation = First | FirstE | Second | SecondA | Mixed | Dolzhen | Foreign ;
+param Conjugation = First | FirstE | Second | SecondA | Mixed | Dolzhen | Foreign | ShortPP ;
 
   oper hasConj : Verbum -> Conjugation = \ v ->
 	 case v.s ! VFORM Act VINF of {
@@ -1165,6 +1165,14 @@ oper presentConjDolzhen: Str -> Str -> PresentVerb = \del, sgP1End ->
     PRF (GSg Neut) _ => del + "но"
   };
 
+oper presentConjShortPP: Str -> Str -> PresentVerb = \del, sgP1End ->
+  table {
+    PRF GPl _        => del + "ны" ;
+    PRF (GSg Masc) _ => del + "н" ;
+    PRF (GSg Fem)  _ => del + "на" ;
+    PRF (GSg Neut) _ => del + "но"
+  };
+
 -- +++ MG_UR: changed! +++
 oper presentConjMixed: Str -> Str -> PresentVerb = \del, sgP1End ->
   table {
@@ -1248,6 +1256,14 @@ oper pastConjDolzhen: Str -> PastVerb = \del ->
     PSF  GPl => ["были "] + del + "ны"
   };
 
+oper pastConjShortPP: Str -> PastVerb = \del ->
+  table {
+    PSF  (GSg Masc) => ["был "] + del + "н" ;
+    PSF  (GSg Fem)  => ["была "] + del + "на" ;
+    PSF  (GSg Neut)  => ["было "] + del + "но" ;
+    PSF  GPl => ["были "] + del + "ны"
+  };
+
 -- further class added by Magda Gerritsen and Ulrich Real
 oper presentConjForeign: Str -> Str -> PresentVerb = \del, sgP1End ->
   table {
@@ -1266,17 +1282,18 @@ oper presentConjForeign: Str -> Str -> PresentVerb = \del, sgP1End ->
 oper verbDecl: Aspect -> Conjugation -> Str -> Str -> Str -> Str -> Str -> Verbum =
    \a, c, del, sgP1End, sgMascPast, imperSgP2, inf -> 
        let conj = case c of {
-	                   First   => <presentConj1,pastConj> ;
-			   FirstE  => <presentConj1E,pastConj> ;
-			   Second  => <presentConj2,pastConj> ;
-			   SecondA => <presentConj2a,pastConj> ;
-			   Mixed   => <presentConjMixed,pastConj> ;
-			   Dolzhen => <presentConjDolzhen,pastConjDolzhen> ;
-			   Foreign => <presentConjForeign,pastConj> } in 
+	                   First   => <presentConj1 del sgP1End,pastConj sgMascPast> ;
+			   FirstE  => <presentConj1E del sgP1End,pastConj sgMascPast> ;
+			   Second  => <presentConj2 del sgP1End,pastConj sgMascPast> ;
+			   SecondA => <presentConj2a del sgP1End,pastConj sgMascPast> ;
+			   Mixed   => <presentConjMixed del sgP1End,pastConj sgMascPast> ;
+			   Dolzhen => <presentConjDolzhen del sgP1End,pastConjDolzhen sgMascPast> ;
+			   ShortPP => <presentConjShortPP (Predef.tk 1 sgMascPast) sgP1End,pastConjShortPP (Predef.tk 1 sgMascPast)> ;
+			   Foreign => <presentConjForeign del sgP1End,pastConj sgMascPast> } in
        let patt = case a of {
 	            Perfective   => mkVerbPerfective;
 		    Imperfective => mkVerbImperfective } in
-       patt inf imperSgP2 (conj.p1 del sgP1End) (conj.p2 sgMascPast) ;
+       patt inf imperSgP2 conj.p1 conj.p2 ;
 
 -- for verbs like "мочь" ("can") with changing consonants (first conjugation):
 -- "могу - можешь"
@@ -1339,7 +1356,7 @@ oper mkVerbPerfective: Str -> Str -> PresentVerb -> PastVerb -> Verbum =
 
 	 VSUB gn => add_sya vox (past ! (PSF gn)) ++ "бы" ;
 
-	 VIND (GSg _) (VPresent p)  => (presentFuture ! (PRF (GSg Masc) p)); -- these are not correct,
+	 VIND (GSg g) (VPresent p)  => (presentFuture ! (PRF (GSg g) p));    -- these are not correct,
 	 VIND GPl     (VPresent p)  => (presentFuture ! (PRF GPl p)) ;       -- but used elsewhere
 	 VIND gn      (VFuture p)   => add_sya vox (presentFuture ! (PRF gn p)) ;
 	 VIND gn      VPast         => add_sya vox (past ! (PSF gn))
