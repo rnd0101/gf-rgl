@@ -498,13 +498,6 @@ foreign = Foreign; -- +++ MG_UR: added +++
 
   oper mkShortParticiple : V -> A = \v ->
 	 let vstem = verbStem v in
-	 let actpres = verbHasEnding v in
-	 let actpast = stemHasEnding vstem in
-	 let passpast = case hasConj v of {
-	       (First|FirstE) => "ем" ;
-	       (Second|SecondA) => "им" ;
-	       _ => "ем"
-	       } in
          mk3AShort (vstem + "н") (vstem + "на") (vstem + "но") (vstem + "ны") True;
 
   oper mkActPresParticiple : V -> A = mkParticiple Act (VPresent P3) ;
