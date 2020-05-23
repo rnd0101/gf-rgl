@@ -249,7 +249,7 @@ perfective: Aspect ;
 first = First ;
 firstE = FirstE ;
 second = Second ;
-secondA = SecondA ;
+secondA = Second ;
 mixed = Mixed ;
 dolzhen = Dolzhen; 
 foreign = Foreign; -- +++ MG_UR: added +++
@@ -493,6 +493,7 @@ foreign = Foreign; -- +++ MG_UR: added +++
   oper mkGerund : VTense -> V -> Adv = \tense, v ->
 	 let vstem = verbStem v in
 	 let suffix = case hasConj v of {
+	       Second => "а" ;
 	       SecondA => "а" ;
 	       _ => "я"
 	       } in
